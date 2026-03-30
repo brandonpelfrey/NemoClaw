@@ -23,7 +23,9 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          if ! printf '%s\n' "$PR_BODY" | grep -qP '^Signed-off-by:\s+.+\s+<[^<>]+>$'; then
+          normalized_body="$(printf '%s\n' "$PR_BODY" | tr -d '\r')"
+
+          if ! printf '%s\n' "$normalized_body" | grep -qP '^Signed-off-by:\s+.+\s+<[^<>]+>$'; then
             echo "::error::PR description must contain a DCO sign-off line."
             echo "::error::Expected format: Signed-off-by: Your Name <your-email@example.com>"
             exit 1
